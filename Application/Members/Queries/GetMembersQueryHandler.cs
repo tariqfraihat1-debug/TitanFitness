@@ -39,137 +39,141 @@ public sealed class GetMembersQueryHandler
         CancellationToken cancellationToken)
     {
         DateOnly today = DateOnly.FromDateTime(DateTime.Now);
-        int page = request.Page < 1 ? 1 : request.Page;
 
-        // Validate the selected branch when filtering.
-        if (request.BranchId.HasValue)
-        {
-            bool branchExists = await _branchReadRepository.AnyAsync(
-                branch => branch.Id == request.BranchId.Value,
-                cancellationToken);
-
-            if (!branchExists)
-                return Result.Failure<PagedResponse<MemberListItem>, Error>(
-                    Error.EntityNotFound(nameof(Branch), request.BranchId.Value));
-        }
-
-        // Load members with their branch only.
-        List<MemberRow> members = await (
+        // Build the directory with branch, relevant membership and last visit.
+        var query =
             from member in _memberReadRepository.GetAll()
+
             join branch in _branchReadRepository.GetAll()
                 on member.HomeBranchId equals branch.Id
+
+            let membership = (
+                from membership in _membershipReadRepository.GetAll()
+                where membership.MemberId == member.Id
+                orderby
+                    membership.StartDate <= today &&
+                    membership.EndDate >= today descending,
+                    membership.StartDate descending
+                select membership)
+                .FirstOrDefault()
+
+            let lastVisit = (
+                from checkIn in _checkInReadRepository.GetAll()
+                where checkIn.MemberId == member.Id
+                orderby checkIn.DateTime descending
+                select (DateTime?)checkIn.DateTime)
+                .FirstOrDefault()
+
             where !request.BranchId.HasValue ||
                   member.HomeBranchId == request.BranchId.Value
-            orderby member.FullName
-            select new MemberRow(
+
+            select new
+            {
                 member.Id,
-                member.MembershipNumber.Value,
+                MembershipNumber = member.MembershipNumber.Value,
                 member.FullName,
-                branch.Name))
-            .ToListAsync(cancellationToken);
+                BranchName = branch.Name,
+                Membership = membership,
+                IsFrozen = membership != null &&
+                    membership.Freezes.Any(freeze =>
+                        freeze.StartDate <= today &&
+                        freeze.EndDate >= today),
+                LastVisit = lastVisit
+            };
 
-        if (members.Count == 0)
-            return Result.Success<PagedResponse<MemberListItem>, Error>(
-                CreatePagedResponse([], 0, page));
-
-        List<int> memberIds = members
-            .Select(member => member.MemberId)
-            .ToList();
-
-        // Load memberships and freezes separately.
-        List<Membership> memberships = await _membershipReadRepository
-            .GetAll()
-            .Where(membership => memberIds.Contains(membership.MemberId))
-            .Include(membership => membership.Freezes)
-            .AsSplitQuery()
-            .ToListAsync(cancellationToken);
-
-        // Load the latest check-in for each member.
-        Dictionary<int, DateTime> lastVisits = await _checkInReadRepository
-            .GetAll()
-            .Where(checkIn => memberIds.Contains(checkIn.MemberId))
-            .GroupBy(checkIn => checkIn.MemberId)
-            .Select(group => new
-            {
-                MemberId = group.Key,
-                LastVisit = group.Max(checkIn => checkIn.DateTime)
-            })
-            .ToDictionaryAsync(
-                item => item.MemberId,
-                item => item.LastVisit,
-                cancellationToken);
-
-        // Build the directory with live membership status.
-        List<MemberListItem> items = members
-            .Select(member =>
-            {
-                Maybe<Membership> membership = memberships
-                    .Where(membership => membership.MemberId == member.MemberId)
-                    .OrderByDescending(membership =>
-                        membership.StartDate <= today &&
-                        membership.EndDate >= today)
-                    .ThenByDescending(membership => membership.StartDate)
-                    .FirstOrDefault();
-
-                string status = membership.HasNoValue
-                    ? "No Membership"
-                    : membership.Value.GetStatusOn(today).Name;
-
-                DateTime? lastVisit = lastVisits.TryGetValue(
-                    member.MemberId,
-                    out DateTime dateTime)
-                    ? dateTime
-                    : null;
-
-                return new MemberListItem(
-                    member.MemberId,
-                    member.MembershipNumber,
-                    member.FullName,
-                    status,
-                    member.BranchName,
-                    lastVisit);
-            })
-            .ToList();
-
-        // Apply search against every value shown in the directory.
+        // Apply search using the live membership status.
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
             string search = request.Search.Trim();
             bool searchIsDate = DateTime.TryParse(search, out DateTime searchDate);
+            DateTime searchDateStart = searchDate.Date;
+            DateTime searchDateEnd = searchDateStart.AddDays(1);
 
-            items = items
-                .Where(member =>
-                    member.FullName.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                    member.MembershipNumber.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                    member.Status.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                    member.Branch.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                    (searchIsDate &&
-                     member.LastVisit.HasValue &&
-                     member.LastVisit.Value.Date == searchDate.Date))
-                .ToList();
+            query = query.Where(member =>
+                member.FullName.Contains(search) ||
+                member.MembershipNumber.Contains(search) ||
+                member.BranchName.Contains(search) ||
+
+                (member.Membership == null &&
+                 "No Membership".Contains(search)) ||
+
+                (member.Membership != null &&
+                 member.Membership.Status == MembershipStatus.Cancelled &&
+                 "Cancelled".Contains(search)) ||
+
+                (member.Membership != null &&
+                 member.Membership.Status != MembershipStatus.Cancelled &&
+                 member.Membership.StartDate > today &&
+                 "Pending".Contains(search)) ||
+
+                (member.Membership != null &&
+                 member.Membership.Status != MembershipStatus.Cancelled &&
+                 member.Membership.EndDate < today &&
+                 "Expired".Contains(search)) ||
+
+                (member.Membership != null &&
+                 member.Membership.Status != MembershipStatus.Cancelled &&
+                 member.Membership.StartDate <= today &&
+                 member.Membership.EndDate >= today &&
+                 member.IsFrozen &&
+                 "Frozen".Contains(search)) ||
+
+                (member.Membership != null &&
+                 member.Membership.Status != MembershipStatus.Cancelled &&
+                 member.Membership.StartDate <= today &&
+                 member.Membership.EndDate >= today &&
+                 !member.IsFrozen &&
+                 "Active".Contains(search)) ||
+
+                (searchIsDate &&
+                 member.LastVisit.HasValue &&
+                 member.LastVisit.Value >= searchDateStart &&
+                 member.LastVisit.Value < searchDateEnd));
         }
 
-        int totalCount = items.Count;
+        // Get the total count for pagination.
+        int totalCount = await query.CountAsync(cancellationToken);
 
-        List<MemberListItem> pagedItems = items
+        int page = request.Page < 1 ? 1 : request.Page;
+
+        // Load the requested page.
+        var members = await query
+            .OrderBy(member => member.FullName)
             .Skip((page - 1) * PageSize)
             .Take(PageSize)
+            .ToListAsync(cancellationToken);
+
+        // Build the live membership status.
+        List<MemberListItem> items = members
+            .Select(member =>
+            {
+                string status;
+
+                if (member.Membership == null)
+                    status = "No Membership";
+                else if (member.Membership.Status == MembershipStatus.Cancelled)
+                    status = MembershipStatus.Cancelled.Name;
+                else if (member.Membership.StartDate > today)
+                    status = MembershipStatus.Pending.Name;
+                else if (member.Membership.EndDate < today)
+                    status = MembershipStatus.Expired.Name;
+                else if (member.IsFrozen)
+                    status = MembershipStatus.Frozen.Name;
+                else
+                    status = MembershipStatus.Active.Name;
+
+                return new MemberListItem(
+                    member.Id,
+                    member.MembershipNumber,
+                    member.FullName,
+                    status,
+                    member.BranchName,
+                    member.LastVisit);
+            })
             .ToList();
 
-        PagedResponse<MemberListItem> response = CreatePagedResponse(
-            pagedItems,
-            totalCount,
-            page);
-
-        return Result.Success<PagedResponse<MemberListItem>, Error>(response);
-    }
-
-    private static PagedResponse<MemberListItem> CreatePagedResponse(
-        List<MemberListItem> items,
-        int totalCount,
-        int page)
-    {
-        return new PagedResponse<MemberListItem>
+        // Build the paged response.
+        PagedResponse<MemberListItem> response = new()
         {
             Items = items,
             TotalCount = totalCount,
@@ -177,11 +181,7 @@ public sealed class GetMembersQueryHandler
             PageSize = PageSize,
             TotalPages = (int)Math.Ceiling(totalCount / (double)PageSize)
         };
-    }
 
-    private sealed record MemberRow(
-        int MemberId,
-        string MembershipNumber,
-        string FullName,
-        string BranchName);
+        return Result.Success<PagedResponse<MemberListItem>, Error>(response);
+    }
 }

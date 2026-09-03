@@ -80,12 +80,12 @@ public sealed class ChangeMembershipPlanCommandHandler
 
             startDate = today;
         }
-        else if (request.Plan.EffectiveMode == ChangePlanEffectiveMode.AtRenewal)
-        {
-            startDate = data.Membership.EndDate < today
-                ? today
-                : data.Membership.EndDate.AddDays(1);
-        }
+else if (request.Plan.EffectiveMode == ChangePlanEffectiveMode.AtRenewal)
+{
+    startDate = data.Membership.EndDate < today
+        ? today
+        : data.Membership.EndDate.AddDays(1);
+}
         else
         {
             return Result.Failure<int, Error>(Error.InvalidValue(nameof(ChangePlanEffectiveMode), request.Plan.EffectiveMode));
