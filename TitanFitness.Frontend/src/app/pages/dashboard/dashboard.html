@@ -1,0 +1,42 @@
+<app-content-header title="Dashboard"
+                    subtitle="Live floor statistics and quick actions.">
+</app-content-header>
+
+@if(loading()){
+<app-loading></app-loading>
+}@else{
+  @if(error()){
+<div class="mb-3">
+  <app-alert-message type="error"
+                     [message]="error()">
+  </app-alert-message>
+</div>
+  }
+
+<div class="row g-3">
+  <div class="col-12 col-xl-8">
+    <div class="row g-3">
+      @for(stat of stats();track stat.title){
+      <div class="col-12 col-md-6">
+        <app-stat-card [title]="stat.title"
+                       [value]="stat.value"
+                       [subtitle]="stat.subtitle"
+                       [icon]="stat.icon">
+        </app-stat-card>
+      </div>
+      }
+    </div>
+
+    <div class="mt-3">
+      <app-upcoming-classes [classes]="upcomingClasses()"
+                            (viewSchedule)="viewSchedule()">
+      </app-upcoming-classes>
+    </div>
+  </div>
+
+  <div class="col-12 col-xl-4">
+    <app-quick-actions (actionSelected)="onQuickAction($event)">
+    </app-quick-actions>
+  </div>
+</div>
+}

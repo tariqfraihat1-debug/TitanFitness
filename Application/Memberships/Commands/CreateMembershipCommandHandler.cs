@@ -31,11 +31,11 @@ public sealed class CreateMembershipCommandHandler
         _unitOfWork = unitOfWork;
     }
 
+    // Creates a membership when the member and plan are valid.
     public async Task<Result<int, Error>> Handle(
         CreateMembershipCommand request,
         CancellationToken cancellationToken)
     {
-        // Validate the selected member.
         Maybe<Member> member = await _memberReadRepository.FirstOrDefaultAsync(
             member => member.Id == request.Membership.MemberId,
             cancellationToken);
@@ -44,32 +44,18 @@ public sealed class CreateMembershipCommandHandler
             return Result.Failure<int, Error>(
                 Error.EntityNotFound(nameof(Member), request.Membership.MemberId));
 
-        // Validate the selected plan.
         Maybe<Plan> plan = await _planReadRepository.FirstOrDefaultAsync(
             plan => plan.Id == request.Membership.PlanId,
             cancellationToken);
 
         if (plan.HasNoValue)
-            return Result.Failure<int, Error>(Error.EntityNotFound(nameof(Plan), request.Membership.PlanId));
+            return Result.Failure<int, Error>(
+                Error.EntityNotFound(nameof(Plan), request.Membership.PlanId));
 
         if (!plan.Value.IsPublished)
-            return Result.Failure<int, Error>(Error.InvalidOperation("Only a published plan can be purchased."));
-
-        DateOnly today = DateOnly.FromDateTime(DateTime.Now);
-
-        // Prevent overlapping active or future memberships.
-        bool membershipExists = await _membershipReadRepository.AnyAsync(
-            membership =>
-                membership.MemberId == request.Membership.MemberId &&
-                membership.Status != MembershipStatus.Cancelled &&
-                membership.EndDate >= today,
-            cancellationToken);
-
-        if (membershipExists)
             return Result.Failure<int, Error>(
-                Error.InvalidOperation("Member already has a current or future membership."));
+                Error.InvalidOperation("Only a published plan can be purchased."));
 
-        // Snapshot the plan terms at the moment of purchase.
         Result<AgreedTerms, Error> agreedTermsResult = AgreedTerms.Create(
             plan.Value.Price,
             plan.Value.DurationInMonths,
@@ -81,7 +67,8 @@ public sealed class CreateMembershipCommandHandler
         if (agreedTermsResult.IsFailure)
             return Result.Failure<int, Error>(agreedTermsResult.Error);
 
-        // Create the membership.
+        DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+
         Result<Membership, Error> membershipResult = Membership.Create(
             request.Membership.MemberId,
             request.Membership.PlanId,
@@ -93,12 +80,27 @@ public sealed class CreateMembershipCommandHandler
         if (membershipResult.IsFailure)
             return Result.Failure<int, Error>(membershipResult.Error);
 
+        Membership newMembership = membershipResult.Value;
+
+        bool hasOverlap = await _membershipReadRepository.AnyAsync(
+            membership =>
+                membership.MemberId == request.Membership.MemberId &&
+                membership.Status != MembershipStatus.Cancelled &&
+                membership.StartDate <= newMembership.EndDate &&
+                membership.EndDate >= newMembership.StartDate,
+            cancellationToken);
+
+        if (hasOverlap)
+            return Result.Failure<int, Error>(
+                Error.InvalidOperation(
+                    "Member already has a membership that overlaps the requested period."));
+
         await _membershipWriteRepository.AddAsync(
-            membershipResult.Value,
+            newMembership,
             cancellationToken);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success<int, Error>(membershipResult.Value.Id);
+        return Result.Success<int, Error>(newMembership.Id);
     }
 }

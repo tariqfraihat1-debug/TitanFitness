@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.6578810">
+  <PropertyGroup>
+    <StartupCommand>npm start</StartupCommand>
+    <ShouldRunBuildScript>false</ShouldRunBuildScript>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="src\app\routing-modules\" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,55 @@
+<div class="border-bottom pb-3">
+
+  <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+
+    <h4 class="fw-bold text-primary-emphasis mb-0">
+      {{session().className}}
+    </h4>
+
+    <span class="badge text-bg-light border">
+
+      <fa-icon [icon]="capacityIcon"
+               class="me-1">
+      </fa-icon>
+
+      {{session().remainingPlaces}} / {{session().capacityLimit}} spots remaining
+
+    </span>
+
+  </div>
+
+  <div class="d-flex flex-wrap gap-3 mt-2 small text-secondary">
+
+    <span>
+
+      <fa-icon [icon]="clockIcon"
+               class="me-1">
+      </fa-icon>
+
+      {{dayLabel()}}, {{startTime()}} - {{endTime()}}
+
+    </span>
+
+    <span>
+
+      <fa-icon [icon]="trainerIcon"
+               class="me-1">
+      </fa-icon>
+
+      Trainer: {{session().trainerName}}
+
+    </span>
+
+    <span>
+
+      <fa-icon [icon]="studioIcon"
+               class="me-1">
+      </fa-icon>
+
+      {{session().studioName}}
+
+    </span>
+
+  </div>
+
+</div>

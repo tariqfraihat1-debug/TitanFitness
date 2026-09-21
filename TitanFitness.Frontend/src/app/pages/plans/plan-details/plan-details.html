@@ -1,0 +1,122 @@
+<app-back-navigation label="Back to list"
+                     (clicked)="back()">
+</app-back-navigation>
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mt-3 mb-4">
+
+  <div>
+
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+
+      <h2 class="fw-bold mb-0">
+        {{title()}}
+      </h2>
+
+      <app-mode-badge [mode]="badgeMode()">
+      </app-mode-badge>
+
+    </div>
+
+    <p class="text-secondary mb-0">
+      {{subtitle()}}
+    </p>
+
+  </div>
+
+  @if(mode()==='view'&&plan()){
+
+  <app-button variant="primary"
+              (clicked)="editPlan()">
+
+    <fa-icon [icon]="editIcon"
+             class="me-2">
+    </fa-icon>
+
+    Edit Plan
+
+  </app-button>
+
+  }
+
+</div>
+
+@if(error()){
+
+<div class="mb-3">
+
+  <app-alert-message type="error"
+                     [message]="error()">
+  </app-alert-message>
+
+</div>
+
+}
+
+@if(loading()){
+
+<app-loading message="Loading plan...">
+</app-loading>
+
+}@else if(mode()==='create'||plan()){
+
+<form [formGroup]="form"
+      (ngSubmit)="save()">
+
+  @if(mode()==='edit'&&plan()){
+
+  <div class="mb-4">
+
+    <app-alert-message type="warning"
+                       [message]="'Changes to this plan apply to new purchases only. ' + plan()!.activeMembershipsCount + ' active memberships keep the terms they were sold.'">
+    </app-alert-message>
+
+  </div>
+
+  }
+
+  <div class="mb-4">
+
+    <app-plan-main-details [form]="form"
+                           [viewMode]="mode()==='view'">
+    </app-plan-main-details>
+
+  </div>
+
+  <app-plan-terms-offered [form]="form"
+                          [viewMode]="mode()==='view'">
+  </app-plan-terms-offered>
+
+  @if(mode()!=='view'){
+
+  <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
+
+    <app-button variant="light"
+                type="button"
+                [disabled]="saving()"
+                (clicked)="cancel()">
+      Cancel
+    </app-button>
+
+    <app-button variant="primary"
+                type="submit"
+                [disabled]="saving()">
+
+      <fa-icon [icon]="saveIcon"
+               class="me-2">
+      </fa-icon>
+
+      @if(mode()==='create'){
+      {{saving()?'Saving...':'Save Plan'}}
+      }@else{
+      {{saving()?'Saving...':'Save Changes'}}
+      }
+
+    </app-button>
+
+  </div>
+
+  }
+
+</form>
+
+}

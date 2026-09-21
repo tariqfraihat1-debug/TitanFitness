@@ -1,0 +1,65 @@
+<div class="card">
+
+  <div class="card-header bg-white py-3">
+    <h6 class="fw-bold mb-0">
+      Recent Activity
+    </h6>
+  </div>
+
+  @if(activities().length===0){
+
+  <app-empty-card title="No recent activity"
+                  message="This member has no recent activity to display.">
+  </app-empty-card>
+
+  }@else{
+
+  <div class="list-group list-group-flush">
+
+    @for(activity of activities();track $index){
+
+    <div class="list-group-item py-3">
+
+      <div class="d-flex align-items-center gap-3">
+
+        <span class="badge bg-primary-subtle text-primary p-2">
+          <fa-icon [icon]="getIcon(activity.activityType)"></fa-icon>
+        </span>
+
+        <div class="flex-grow-1">
+          <div class="fw-semibold">
+            {{activity.activityType}}
+          </div>
+
+          <div class="small text-secondary">
+            {{activity.description}}
+          </div>
+
+          @if(activity.refusalReason){
+          <div class="small text-danger">
+            {{activity.refusalReason}}
+          </div>
+          }
+        </div>
+
+        <div class="text-end small text-secondary">
+          <div>
+            {{activity.dateTime|date:'MMM d, y'}}
+          </div>
+
+          <div>
+            {{activity.dateTime|date:'hh:mm a'}}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    }
+
+  </div>
+
+  }
+
+</div>

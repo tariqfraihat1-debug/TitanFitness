@@ -1,0 +1,57 @@
+<div class="card">
+
+  <div class="card-header bg-white py-3">
+    <h5 class="fw-bold mb-0">
+      Capacity Overview
+    </h5>
+  </div>
+
+  <div class="card-body">
+
+    <div class="row g-3">
+
+      <div class="col-6">
+
+        <div class="border rounded p-3">
+
+          <fa-icon [icon]="bookingsIcon"
+                   class="text-primary">
+          </fa-icon>
+
+          <div class="display-6 fw-bold mt-2">
+            {{summary().totalBookings}}
+          </div>
+
+          <div class="small text-secondary">
+            Total Bookings
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="col-6">
+
+        <div class="border rounded p-3">
+
+          <fa-icon [icon]="fillRateIcon"
+                   class="text-primary">
+          </fa-icon>
+
+          <div class="display-6 fw-bold mt-2">
+            {{summary().averageFillRate|number:'1.0-0'}}%
+          </div>
+
+          <div class="small text-secondary">
+            Avg Fill Rate
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

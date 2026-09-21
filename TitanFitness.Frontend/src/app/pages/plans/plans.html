@@ -1,0 +1,72 @@
+<div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-start gap-3 mb-4">
+
+  <app-content-header title="Plan Catalogue"
+                      subtitle="Manage and view all membership plans.">
+  </app-content-header>
+
+  <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-2">
+
+    <select class="form-select w-auto"
+            aria-label="Access scope"
+            [value]="accessScope()??''"
+            (change)="onAccessScopeChange($event)">
+
+      <option value="">
+        All Access Scopes
+      </option>
+
+      <option [value]="AccessScopeFilter.HomeBranchOnly">
+        Home Branch Only
+      </option>
+
+      <option [value]="AccessScopeFilter.AllBranches">
+        All Branches
+      </option>
+
+    </select>
+
+    <app-button class="flex-shrink-0 text-nowrap"
+                variant="primary"
+                (clicked)="addPlan()">
+
+      <fa-icon [icon]="addIcon"
+               class="me-2">
+      </fa-icon>
+
+      Add Plan
+
+    </app-button>
+
+  </div>
+
+</div>
+
+@if(error()){
+
+<div class="mb-3">
+
+  <app-alert-message type="error"
+                     [message]="error()">
+  </app-alert-message>
+
+</div>
+
+}
+
+@if(loading()){
+
+<app-loading message="Loading plans...">
+</app-loading>
+
+}@else{
+
+<app-plan-table [plans]="plans()"
+                [currentPage]="page()"
+                [totalPages]="totalPages()"
+                [totalCount]="totalCount()"
+                [pageSize]="pageSize()"
+                (pageChanged)="onPageChange($event)"
+                (actionSelected)="onPlanAction($event)">
+</app-plan-table>
+
+}

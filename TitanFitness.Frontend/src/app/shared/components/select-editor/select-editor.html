@@ -1,0 +1,32 @@
+<label class="form-label fw-semibold">
+  {{label()}}
+
+  @if(requiredMark()){
+  <span class="text-danger">*</span>
+  }
+</label>
+
+<select class="form-select"
+        [formControl]="control()">
+  <option [ngValue]="null">
+    {{placeholder()}}
+  </option>
+
+  @for(option of options();track option.value){
+  <option [ngValue]="option.value">
+    {{option.label}}
+  </option>
+  }
+</select>
+
+@if(helper()){
+<small class="text-secondary d-block mt-1">
+  {{helper()}}
+</small>
+}
+
+@if(control().touched&&control().invalid&&errorMessage()){
+<small class="text-danger d-block mt-1">
+  {{errorMessage()}}
+</small>
+}

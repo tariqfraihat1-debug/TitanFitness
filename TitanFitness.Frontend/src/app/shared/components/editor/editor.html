@@ -1,0 +1,31 @@
+<label class="form-label fw-semibold">
+  {{label()}}
+
+  @if(requiredMark()){
+  <span class="text-danger">*</span>
+  }
+</label>
+
+<input [type]="type()"
+       class="form-control"
+       [formControl]="control()"
+       [placeholder]="placeholder()"
+       [readonly]="readonly()"
+       [attr.min]="min()"
+       [attr.step]="step()">
+
+@if(helper()){
+
+<small class="text-secondary d-block mt-1">
+  {{helper()}}
+</small>
+
+}
+
+@if(control().touched&&control().invalid&&errorMessage()){
+
+<small class="text-danger">
+  {{errorMessage()}}
+</small>
+
+}

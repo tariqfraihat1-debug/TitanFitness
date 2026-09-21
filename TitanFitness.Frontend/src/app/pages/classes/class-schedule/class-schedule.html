@@ -1,0 +1,95 @@
+<div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-start gap-3 mb-4">
+
+  <app-content-header title="Class Schedule"
+                      [subtitle]="bookingMode()
+      ?'Select a session to continue with the booking.'
+      :'Manage and monitor today\'s sessions.'">
+  </app-content-header>
+
+  <app-schedule-filters [branches]="branches()"
+                        [branchId]="branchId()"
+                        [date]="date()"
+                        (branchChanged)="onBranchChange($event)"
+                        (dateChanged)="onDateChange($event)"
+                        (addClass)="addClass()">
+  </app-schedule-filters>
+
+</div>
+
+@if(bookingMode()){
+
+<div class="mb-3">
+
+  <app-alert-message type="info"
+                     message="Select an open class session below to continue with the booking.">
+  </app-alert-message>
+
+</div>
+
+}
+
+@if(error()){
+
+<div class="mb-3">
+
+  <app-alert-message type="error"
+                     [message]="error()">
+  </app-alert-message>
+
+</div>
+
+}
+
+@if(loading()){
+
+<app-loading message="Loading class schedule...">
+</app-loading>
+
+}@else{
+
+<div class="row g-3">
+
+  <div class="col-12 col-lg-8">
+
+    <app-session-list [sessions]="sessions()"
+                      [totalCount]="totalCount()"
+                      [selectable]="bookingMode()"
+                      (sessionSelected)="selectBookingSession($event)">
+    </app-session-list>
+
+    @if(totalPages()>1){
+
+    <div class="d-flex justify-content-end mt-3">
+
+      <app-pagination [currentPage]="page()"
+                      [totalPages]="totalPages()"
+                      (pageChanged)="onPageChange($event)">
+      </app-pagination>
+
+    </div>
+
+    }
+
+  </div>
+
+  <div class="col-12 col-lg-4">
+
+    <app-capacity-overview [summary]="summary()">
+    </app-capacity-overview>
+
+  </div>
+
+</div>
+
+}
+
+@if(showAddClass()){
+
+<app-add-class [branches]="branches()"
+               [defaultBranchId]="branchId()"
+               [defaultDate]="date()"
+               (closed)="closeAddClass()"
+               (created)="onClassCreated($event)">
+</app-add-class>
+
+}

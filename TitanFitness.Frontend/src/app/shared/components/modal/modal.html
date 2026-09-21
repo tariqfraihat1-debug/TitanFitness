@@ -1,0 +1,37 @@
+<div class="modal show d-block"
+     tabindex="-1"
+     role="dialog"
+     aria-modal="true">
+
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold">
+          {{title()}}
+        </h5>
+
+        <button type="button"
+                class="btn-close"
+                aria-label="Close"
+                [disabled]="closeDisabled()"
+                (click)="closed.emit()">
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <ng-content></ng-content>
+      </div>
+
+      <div class="modal-footer bg-body-tertiary">
+        <ng-content select="[modal-footer]"></ng-content>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="modal-backdrop show"></div>

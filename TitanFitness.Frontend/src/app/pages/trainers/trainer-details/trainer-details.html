@@ -1,0 +1,172 @@
+<app-back-navigation label="Back to list"
+                     (clicked)="back()">
+</app-back-navigation>
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mt-3 mb-4">
+
+  <div>
+
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+
+      <h2 class="fw-bold mb-0">
+        {{title()}}
+      </h2>
+
+      <app-mode-badge [mode]="badgeMode()">
+      </app-mode-badge>
+
+    </div>
+
+    <p class="text-secondary mb-0">
+      {{subtitle()}}
+    </p>
+
+  </div>
+
+  @if(mode()==='view'&&trainer()){
+
+  <app-button variant="primary"
+              (clicked)="editTrainer()">
+
+    <fa-icon [icon]="editIcon"
+             class="me-2">
+    </fa-icon>
+
+    Edit Trainer
+
+  </app-button>
+
+  }
+
+</div>
+
+@if(error()){
+
+<div class="mb-3">
+
+  <app-alert-message type="error"
+                     [message]="error()">
+  </app-alert-message>
+
+</div>
+
+}
+
+@if(loading()){
+
+<app-loading message="Loading trainer...">
+</app-loading>
+
+}@else if(mode()==='create'||trainer()){
+
+<form [formGroup]="form"
+      (ngSubmit)="save()">
+
+  <div class="card">
+
+    <div class="card-header bg-white py-3">
+
+      <h5 class="fw-bold mb-0">
+        Trainer Details
+      </h5>
+
+    </div>
+
+    <div class="card-body">
+
+      <div class="row g-3">
+
+        @for(field of fields;track field.key){
+
+        <div class="col-12 col-md-6">
+
+          @if(field.kind==='branch'){
+
+          <app-select-editor [label]="field.label"
+                             [control]="form.controls.branchId"
+                             [options]="branchOptions()"
+                             placeholder="Select a branch"
+                             [requiredMark]="true"
+                             errorMessage="Branch is required.">
+          </app-select-editor>
+
+          }@else if(field.kind==='status'){
+
+          <label class="form-label fw-semibold">
+            {{field.label}}
+          </label>
+
+          <div class="form-check">
+
+            <input id="trainerIsActive"
+                   type="checkbox"
+                   class="form-check-input"
+                   [formControl]="form.controls.isActive">
+
+            <label for="trainerIsActive"
+                   class="form-check-label">
+              IsActive
+            </label>
+
+          </div>
+
+          <small class="text-secondary d-block mt-1">
+            Ticked means true, unticked means false.
+          </small>
+
+          }@else{
+
+          <app-editor [label]="field.label"
+                      [type]="field.type"
+                      [control]="form.controls[field.control]"
+                      [placeholder]="field.placeholder"
+                      [requiredMark]="field.requiredMark"
+                      [errorMessage]="field.errorMessage">
+          </app-editor>
+
+          }
+
+        </div>
+
+        }
+
+      </div>
+
+    </div>
+
+  </div>
+
+  @if(mode()!=='view'){
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+
+    <app-button variant="outline-secondary"
+                type="button"
+                [disabled]="saving()"
+                (clicked)="cancel()">
+      Cancel
+    </app-button>
+
+    <app-button variant="primary"
+                type="submit"
+                [disabled]="saving()">
+
+      <fa-icon [icon]="saveIcon"
+               class="me-2">
+      </fa-icon>
+
+      @if(mode()==='create'){
+      {{saving()?'Saving...':'Save Trainer'}}
+      }@else{
+      {{saving()?'Saving...':'Save Changes'}}
+      }
+
+    </app-button>
+
+  </div>
+
+  }
+
+</form>
+
+}

@@ -1,0 +1,20 @@
+<div class="d-flex align-items-center gap-2">
+  <app-button variant="outline-secondary"
+              [disabled]="currentPage()===1"
+              (clicked)="changePage(currentPage()-1)">
+    Previous
+  </app-button>
+
+  @for(page of pages();track page){
+  <app-button [variant]="page===currentPage()?'primary':'outline-secondary'"
+              (clicked)="changePage(page)">
+    {{page}}
+  </app-button>
+  }
+
+  <app-button variant="outline-secondary"
+              [disabled]="currentPage()===totalPages()"
+              (clicked)="changePage(currentPage()+1)">
+    Next
+  </app-button>
+</div>

@@ -1,0 +1,126 @@
+<app-modal title="Member Check-In"
+           [closeDisabled]="saving()"
+           (closed)="close()">
+
+  @if(error()){
+
+  <div class="mb-3">
+
+    <app-alert-message type="error"
+                       [message]="error()">
+    </app-alert-message>
+
+  </div>
+
+  }
+
+  @if(branchesLoading()){
+
+  <app-loading message="Loading check-in...">
+  </app-loading>
+
+  }@else{
+
+  <form [formGroup]="form"
+        (ngSubmit)="confirmCheckIn()">
+
+    <div class="mb-4">
+
+      <app-select-editor label="Branch"
+                         [control]="form.controls.branchId"
+                         [options]="branchOptions()"
+                         placeholder="Select branch"
+                         [requiredMark]="true"
+                         errorMessage="Branch is required.">
+      </app-select-editor>
+
+    </div>
+
+    <div class="mb-3">
+
+      <label class="form-label fw-semibold">
+        Find member
+        <span class="text-danger">*</span>
+      </label>
+
+      <app-member-search [members]="members()"
+                         [loading]="searchLoading()"
+                         [searched]="searched()"
+                         (searchChanged)="searchMembers($event)"
+                         (memberSelected)="selectMember($event)">
+      </app-member-search>
+
+    </div>
+
+    @if(selectedMember()){
+
+    <div class="mb-4">
+
+      <app-member-summary-card [name]="selectedMember()!.fullName"
+                               [membershipNumber]="selectedMember()!.membershipNumber"
+                               [status]="selectedMember()!.status"
+                               [photo]="selectedMember()!.photo">
+      </app-member-summary-card>
+
+    </div>
+
+    }
+
+    @if(selectedMember()&&selectedBranchId()){
+
+    <div class="mt-4">
+
+      @if(eligibilityLoading()){
+
+      <div class="border rounded p-3 text-secondary">
+
+        <span class="spinner-border spinner-border-sm me-2"
+              aria-hidden="true">
+        </span>
+
+        Checking entry eligibility...
+
+      </div>
+
+      }@else if(eligibility()){
+
+      <app-entry-eligibility [eligibility]="eligibility()!"
+                             [branchName]="selectedBranchName()">
+      </app-entry-eligibility>
+
+      }
+
+    </div>
+
+    }
+
+  </form>
+
+  }
+
+  <div modal-footer
+       class="d-flex gap-2">
+
+    <app-button variant="outline-secondary"
+                type="button"
+                [disabled]="saving()"
+                (clicked)="close()">
+      Cancel
+    </app-button>
+
+    <app-button variant="primary"
+                type="button"
+                [disabled]="!canConfirm()"
+                (clicked)="confirmCheckIn()">
+
+      <fa-icon [icon]="checkInIcon"
+               class="me-2">
+      </fa-icon>
+
+      {{saving()?'Recording...':'Confirm Check-In'}}
+
+    </app-button>
+
+  </div>
+
+</app-modal>

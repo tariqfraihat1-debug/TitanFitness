@@ -71,7 +71,8 @@ public sealed class GetCurrentMembershipQueryHandler
         CurrentMembership currentMembership = new(
             data.Membership.Id,
             data.Plan.Id,
-            data.Plan.PlanName,
+            data.Plan.PlanName, 
+            data.Membership.AgreedTerms.PricePaid,
             data.Membership.StartDate,
             data.Membership.EndDate,
             currentStatus.Name,

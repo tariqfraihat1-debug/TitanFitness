@@ -1,0 +1,66 @@
+<div class="mb-3">
+  <app-back-navigation label="Back to Member Profile"
+                       (clicked)="back()">
+  </app-back-navigation>
+</div>
+
+<h2 class="fw-bold mb-1">
+  Freeze Membership
+</h2>
+
+<p class="text-secondary mb-4">
+  Temporarily suspend a membership contract.
+</p>
+
+@if(error()){
+<div class="mb-3">
+  <app-alert-message type="error"
+                     [message]="error()">
+  </app-alert-message>
+</div>
+}
+
+@if(loading()){
+<app-loading message="Loading membership..."></app-loading>
+}@else if(member();as currentMember){
+  @if(membership();as currentMembership){
+
+<div class="row g-3">
+
+  <div class="col-12 col-lg-8">
+    <div class="d-grid gap-3">
+
+      <app-member-summary-strip [member]="currentMember"
+                                [membership]="currentMembership"
+                                variant="freeze">
+      </app-member-summary-strip>
+
+      <app-freeze-parameters [startDate]="form.controls.startDate"
+                             [freezeDurationId]="form.controls.freezeDurationId"
+                             [freezeReasonId]="form.controls.freezeReasonId"
+                             [notes]="form.controls.notes"
+                             [durations]="durationOptions"
+                             [reasons]="reasonOptions"
+                             [minStartDate]="minStartDate">
+      </app-freeze-parameters>
+
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+
+    <app-projected-impact [originalEndDate]="currentMembership.endDate"
+                          [duration]="selectedDuration()?.label??'—'"
+                          [newEndDate]="projectedEndDate()"
+                          [canConfirm]="form.valid"
+                          [saving]="saving()"
+                          (confirm)="confirmFreeze()"
+                          (cancel)="back()">
+    </app-projected-impact>
+
+  </div>
+
+</div>
+
+  }
+}

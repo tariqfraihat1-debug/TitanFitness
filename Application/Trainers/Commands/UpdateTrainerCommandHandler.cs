@@ -30,7 +30,6 @@ public sealed class UpdateTrainerCommandHandler
         UpdateTrainerCommand request,
         CancellationToken cancellationToken)
     {
-        // Load the tracked trainer and validate the selected branch.
         var data = await _trainerWriteRepository
             .Query()
             .Where(trainer => trainer.Id == request.TrainerId)
@@ -44,20 +43,27 @@ public sealed class UpdateTrainerCommandHandler
             .FirstOrDefaultAsync(cancellationToken);
 
         if (data is null)
-            return UnitResult.Failure(Error.EntityNotFound(nameof(Trainer), request.TrainerId));
+            return UnitResult.Failure(
+                Error.EntityNotFound(
+                    nameof(Trainer),
+                    request.TrainerId));
 
         if (!data.BranchExists)
-            return UnitResult.Failure(Error.EntityNotFound(nameof(Branch), request.Trainer.BranchId));
+            return UnitResult.Failure(
+                Error.EntityNotFound(
+                    nameof(Branch),
+                    request.Trainer.BranchId));
 
-        // Create the optional contact value objects.
         Email? email = null;
 
         if (!string.IsNullOrWhiteSpace(request.Trainer.Email))
         {
-            Result<Email, Error> emailResult = Email.Create(request.Trainer.Email);
+            Result<Email, Error> emailResult =
+                Email.Create(request.Trainer.Email);
 
             if (emailResult.IsFailure)
-                return UnitResult.Failure(emailResult.Error);
+                return UnitResult.Failure(
+                    emailResult.Error);
 
             email = emailResult.Value;
         }
@@ -66,28 +72,33 @@ public sealed class UpdateTrainerCommandHandler
 
         if (!string.IsNullOrWhiteSpace(request.Trainer.Phone))
         {
-            Result<Phone, Error> phoneResult = Phone.Create(request.Trainer.Phone);
+            Result<Phone, Error> phoneResult =
+                Phone.Create(request.Trainer.Phone);
 
             if (phoneResult.IsFailure)
-                return UnitResult.Failure(phoneResult.Error);
+                return UnitResult.Failure(
+                    phoneResult.Error);
 
             phone = phoneResult.Value;
         }
 
-        // Let the Domain validate and update the trainer.
-        UnitResult<Error> updateResult = data.Trainer.Update(
-            request.Trainer.Name,
-            request.Trainer.BranchId,
-            request.Trainer.Specialty,
-            email,
-            phone,
-            request.Trainer.IsActive);
+        UnitResult<Error> updateResult =
+            data.Trainer.Update(
+                request.Trainer.Name,
+                request.Trainer.BranchId,
+                request.Trainer.Specialty,
+                email,
+                phone,
+                request.Trainer.IsActive);
 
         if (updateResult.IsFailure)
             return updateResult;
 
-        // Persist the tracked trainer changes.
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        _trainerWriteRepository.Update(
+            data.Trainer);
+
+        await _unitOfWork.SaveChangesAsync(
+            cancellationToken);
 
         return UnitResult.Success<Error>();
     }

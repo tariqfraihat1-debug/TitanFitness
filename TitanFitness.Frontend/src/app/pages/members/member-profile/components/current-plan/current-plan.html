@@ -1,0 +1,115 @@
+<div class="card h-100">
+  <div class="card-body p-4">
+
+    @if(membership();as currentMembership){
+
+    <div class="d-flex justify-content-between align-items-start gap-3">
+
+      <div>
+        <span class="small fw-semibold text-secondary text-uppercase">
+          Current Plan
+        </span>
+
+        <h5 class="fw-bold text-primary-emphasis mt-1 mb-1">
+          {{currentMembership.planName}}
+        </h5>
+      </div>
+
+      <span class="fw-bold text-nowrap">
+        {{currentMembership.pricePaid|currency:'USD':'symbol':'1.2-2'}}
+      </span>
+
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-4">
+      <span class="text-secondary">
+        {{isExpired()?'Ended':'Renews'}}:
+        {{currentMembership.endDate|date:'MMM d, y'}}
+      </span>
+
+      <span class="text-secondary">•</span>
+
+      <app-status-badge [status]="currentMembership.status">
+      </app-status-badge>
+    </div>
+
+    @if(isExpired()){
+    <div class="d-grid gap-2">
+
+      <app-button class="d-grid"
+                  variant="primary"
+                  (clicked)="renewMembership.emit()">
+        <span class="fw-semibold">
+          Renew Membership
+        </span>
+      </app-button>
+
+      <app-button class="d-grid"
+                  variant="outline-secondary"
+                  (clicked)="changePlan.emit()">
+        <span class="fw-semibold">
+          Change Plan
+        </span>
+      </app-button>
+
+    </div>
+    }@else{
+    <div class="d-grid gap-2">
+
+      <app-button class="d-grid"
+                  variant="primary"
+                  (clicked)="changePlan.emit()">
+        <span class="fw-semibold">
+          Change Plan
+        </span>
+      </app-button>
+
+      <app-button class="d-grid"
+                  variant="outline-secondary"
+                  [disabled]="!canFreeze()"
+                  (clicked)="freezeMembership.emit()">
+        <span class="fw-semibold">
+          <fa-icon [icon]="freezeIcon"
+                   class="me-2">
+          </fa-icon>
+          Freeze Membership
+        </span>
+      </app-button>
+
+    </div>
+    }
+
+    <hr class="my-4">
+
+    <div class="d-flex align-items-start gap-2 text-secondary">
+      <fa-icon [icon]="infoIcon"
+               class="flex-shrink-0 mt-1">
+      </fa-icon>
+
+      @if(isExpired()){
+      <span>
+        Renew creates a fresh membership from today using the current plan's terms.
+        <strong>Change Plan</strong> renews onto a different plan.
+      </span>
+      }@else{
+      <span>
+        Once the membership expires, Freeze is replaced by
+        <strong>Renew</strong>, which starts a new membership from today.
+      </span>
+      }
+    </div>
+
+    }@else{
+    <div class="text-center py-4">
+      <h6 class="fw-bold mb-2">
+        No Current Membership
+      </h6>
+
+      <p class="small text-secondary mb-0">
+        This member does not currently have a membership.
+      </p>
+    </div>
+    }
+
+  </div>
+</div>

@@ -1,0 +1,94 @@
+<div class="mt-4">
+  <label class="form-label fw-semibold">
+    When does the change take effect?
+  </label>
+
+  <div class="d-grid gap-2">
+
+    <div class="border rounded p-3"
+         role="radio"
+         tabindex="0"
+         [attr.aria-checked]="mode()===effectiveMode.AtRenewal"
+         [class.border-primary]="mode()===effectiveMode.AtRenewal"
+         (click)="modeChange.emit(effectiveMode.AtRenewal)"
+         (keydown.enter)="modeChange.emit(effectiveMode.AtRenewal)"
+         (keydown.space)="modeChange.emit(effectiveMode.AtRenewal)">
+
+      <div class="d-flex align-items-start gap-2">
+        <input id="atRenewal"
+               type="radio"
+               class="form-check-input mt-1"
+               name="effectiveMode"
+               [checked]="mode()===effectiveMode.AtRenewal"
+               (click)="$event.stopPropagation()"
+               (change)="modeChange.emit(effectiveMode.AtRenewal)">
+
+        <div>
+          <div class="fw-semibold">
+            At renewal
+
+            <span class="badge bg-success-subtle text-success ms-2">
+              Recommended
+            </span>
+          </div>
+
+          <div class="small text-secondary">
+            The new membership begins when the current one ends.
+            No day is covered by two memberships.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="border rounded p-3"
+         role="radio"
+         tabindex="0"
+         [attr.aria-checked]="mode()===effectiveMode.Immediately"
+         [class.border-primary]="mode()===effectiveMode.Immediately"
+         (click)="modeChange.emit(effectiveMode.Immediately)"
+         (keydown.enter)="modeChange.emit(effectiveMode.Immediately)"
+         (keydown.space)="modeChange.emit(effectiveMode.Immediately)">
+
+      <div class="d-flex align-items-start gap-2">
+        <input id="immediately"
+               type="radio"
+               class="form-check-input mt-1"
+               name="effectiveMode"
+               [checked]="mode()===effectiveMode.Immediately"
+               (click)="$event.stopPropagation()"
+               (change)="modeChange.emit(effectiveMode.Immediately)">
+
+        <div>
+          <div class="fw-semibold">
+            Immediately
+          </div>
+
+          <div class="small text-secondary">
+            Cancel the current membership today and start the new one now.
+            Cancellation is final and cannot be reversed.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="mt-3">
+    <label for="newStartDate"
+           class="form-label fw-semibold">
+      New start date
+    </label>
+
+    <input id="newStartDate"
+           type="date"
+           class="form-control"
+           [value]="startDate()"
+           readonly>
+
+    <div class="form-text">
+      Set automatically from the option above.
+    </div>
+  </div>
+</div>

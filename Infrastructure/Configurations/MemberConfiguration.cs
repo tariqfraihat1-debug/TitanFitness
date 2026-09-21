@@ -61,7 +61,7 @@ public sealed class MemberConfiguration : IEntityTypeConfiguration<Member>
 
         builder.Property(x => x.Photo)
             .HasColumnName("Photo")
-            .HasMaxLength(500);
+            .HasColumnType("nvarchar(max)");
 
         builder.Property(x => x.HomeBranchId)
             .HasColumnName("HomeBranchId")

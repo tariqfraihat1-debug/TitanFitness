@@ -1,0 +1,30 @@
+<label [for]="id()"
+       class="form-label fw-semibold">
+
+  {{label()}}
+
+  @if(requiredMark()){
+  <span class="text-danger">*</span>
+  }
+
+  @if(optionalText()){
+  <span class="text-secondary fw-normal">
+    ({{optionalText()}})
+  </span>
+  }
+
+</label>
+
+<textarea [id]="id()"
+          class="form-control"
+          [rows]="rows()"
+          [placeholder]="placeholder()"
+          [attr.maxlength]="maxLength()"
+          [formControl]="control()">
+</textarea>
+
+@if(control().touched&&control().invalid&&errorMessage()){
+<small class="text-danger">
+  {{errorMessage()}}
+</small>
+}

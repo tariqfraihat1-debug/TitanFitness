@@ -1,0 +1,28 @@
+<div class="card h-100">
+  <div class="card-header bg-white py-3">
+    <h5 class="fw-bold mb-0">Quick Actions</h5>
+  </div>
+
+  <div class="card-body d-flex flex-column gap-3">
+    @for(item of actions;track item.action){
+    <app-button class="quick-action-button d-flex flex-fill"
+                variant="light"
+                (clicked)="actionSelected.emit(item.action)">
+      <span class="d-flex align-items-center gap-3 text-start h-100">
+        <span class="bg-primary-subtle text-primary rounded p-3">
+          <fa-icon [icon]="item.icon"></fa-icon>
+        </span>
+
+        <span>
+          <span class="d-block fw-bold text-dark">
+            {{item.title}}
+          </span>
+          <small class="text-secondary">
+            {{item.description}}
+          </small>
+        </span>
+      </span>
+    </app-button>
+    }
+  </div>
+</div>

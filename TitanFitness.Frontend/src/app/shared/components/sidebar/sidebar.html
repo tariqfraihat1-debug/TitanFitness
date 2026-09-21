@@ -1,0 +1,47 @@
+<aside id="portalSidebar"
+       class="portal-sidebar offcanvas-md offcanvas-start flex-grow-1 min-vh-100 text-white"
+       tabindex="-1">
+
+  <div class="d-flex align-items-center justify-content-between px-4 py-3">
+    <div class="d-flex align-items-center gap-2">
+      <span class="sidebar-logo d-flex align-items-center justify-content-center bg-white text-primary fw-bold rounded">
+        T
+      </span>
+
+      <div>
+        <div class="fw-bold">Titan Fitness</div>
+        <small class="text-white-50">Staff Portal</small>
+      </div>
+    </div>
+
+    <button type="button"
+            class="btn btn-light d-md-none"
+            data-bs-dismiss="offcanvas"
+            data-bs-target="#portalSidebar"
+            aria-label="Close menu">
+      <fa-icon [icon]="faXmark"></fa-icon>
+    </button>
+  </div>
+
+  <div class="px-4 py-3">
+    <app-button variant="light"
+                (clicked)="openCheckIn()">
+      <fa-icon [icon]="faRightToBracket" class="me-2"></fa-icon>
+      New Check-In
+    </app-button>
+  </div>
+
+  <nav class="d-flex flex-column gap-1">
+    @for(item of items;track item.link){
+    <a [routerLink]="item.link"
+       routerLinkActive="active-sidebar-link"
+       [routerLinkActiveOptions]="{exact:item.link==='/dashboard'}"
+       data-bs-dismiss="offcanvas"
+       data-bs-target="#portalSidebar"
+       class="sidebar-link d-flex align-items-center gap-3 text-decoration-none px-4 py-3">
+      <fa-icon [icon]="item.icon"></fa-icon>
+      <span>{{item.label}}</span>
+    </a>
+    }
+  </nav>
+</aside>

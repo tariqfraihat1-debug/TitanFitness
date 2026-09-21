@@ -1,0 +1,78 @@
+<div class="card h-100">
+
+  <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+
+    <h5 class="fw-bold mb-0">
+      Upcoming Classes
+    </h5>
+
+    <app-button class="schedule-link"
+                variant="link"
+                (clicked)="viewSchedule.emit()">
+      View Schedule
+    </app-button>
+
+  </div>
+
+  <div class="card-body p-0">
+
+    @if(classes().length===0){
+
+    <app-empty-card [icon]="faCalendarXmark"
+                    title="No upcoming classes"
+                    message="There are no upcoming classes to display."
+                    [showButton]="false">
+    </app-empty-card>
+
+    }@else{
+
+    @for(session of classes();track session.sessionId){
+
+    <div class="upcoming-class-row d-flex justify-content-between align-items-center gap-3 p-3 border-bottom">
+      <div class="d-flex align-items-start gap-3">
+        <div class="text-center class-time">
+          <div class="fw-bold">
+            {{session.startTime|time12Hour:'time'}}
+          </div>
+          <div class="small text-secondary">
+            {{session.startTime|time12Hour:'period'}}
+          </div>
+        </div>
+        <div>
+          <h5 class="fw-bold mb-1">
+            {{session.className}}
+          </h5>
+          <div class="d-flex flex-wrap gap-2 text-secondary small">
+            <span>
+              <fa-icon [icon]="faLocationDot"
+                       class="me-1">
+              </fa-icon>
+
+              {{session.studioName}}
+            </span>
+            <span>
+              <fa-icon [icon]="faUser"
+                       class="me-1">
+              </fa-icon>
+              {{session.trainerName}}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="class-meta d-flex align-items-center gap-3">
+        <span class="text-secondary small">
+          <fa-icon [icon]="faUsers"
+                   class="me-1">
+          </fa-icon>
+          {{session.bookedCount}}/{{session.capacityLimit}} Enrolled
+        </span>
+        <app-status-badge [status]="session.status">
+        </app-status-badge>
+      </div>
+    </div>
+    }
+    }
+  </div>
+
+</div>

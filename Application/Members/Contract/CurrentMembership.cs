@@ -4,6 +4,7 @@ public sealed record CurrentMembership(
     int MembershipId,
     int PlanId,
     string PlanName,
+    decimal PricePaid,
     DateOnly StartDate,
     DateOnly EndDate,
     string Status,

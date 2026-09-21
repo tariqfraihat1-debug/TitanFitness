@@ -6,4 +6,5 @@ public sealed record MemberListItem(
     string FullName,
     string Status,
     string Branch,
-    DateTime? LastVisit);
+    DateTime? LastVisit,
+    string? Photo);

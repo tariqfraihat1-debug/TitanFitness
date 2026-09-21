@@ -1,0 +1,35 @@
+<div class="border rounded bg-body-tertiary p-2 d-flex align-items-center justify-content-between gap-3"
+     [attr.role]="selectable()?'button':null"
+     [attr.tabindex]="selectable()?0:null"
+     (click)="select()"
+     (keydown.enter)="select()"
+     (keydown.space)="select()">
+
+  <div class="d-flex align-items-center gap-2">
+
+    <div class="member-photo-sm flex-shrink-0">
+
+      <app-member-photo [photo]="photo()"
+                        [alt]="name()">
+      </app-member-photo>
+
+    </div>
+
+    <div>
+
+      <div class="fw-semibold">
+        {{name()}}
+      </div>
+
+      <div class="small text-secondary">
+        ID: #{{membershipNumber()}}
+      </div>
+
+    </div>
+
+  </div>
+
+  <app-status-badge [status]="status()">
+  </app-status-badge>
+
+</div>

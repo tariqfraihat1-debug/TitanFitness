@@ -1,0 +1,112 @@
+<div class="card">
+
+  @if(trainers().length===0){
+
+  <div class="card-body">
+
+    <app-empty-card [icon]="emptyIcon"
+                    title="No trainers found"
+                    message="No trainers match the current search or branch."
+                    [showButton]="false">
+    </app-empty-card>
+
+  </div>
+
+  }@else{
+
+  <div class="table-responsive">
+
+    <table class="table align-middle mb-0">
+
+      <thead class="table-light">
+
+        <tr>
+          <th>Trainer Name</th>
+          <th>ID</th>
+          <th>Specialty</th>
+          <th>Branch</th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        @for(trainer of trainers();track trainer.trainerId){
+
+        <tr>
+
+          <td>
+
+            <div class="d-flex align-items-center gap-2">
+
+              <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-secondary-subtle text-secondary fw-semibold p-2">
+                {{initials(trainer.name)}}
+              </span>
+
+              <span class="fw-semibold">
+                {{trainer.name}}
+              </span>
+
+            </div>
+
+          </td>
+
+          <td>
+            {{trainerNumber(trainer.trainerId)}}
+          </td>
+
+          <td>
+            {{trainer.specialty||'—'}}
+          </td>
+
+          <td>
+            {{trainer.branchName}}
+          </td>
+
+          <td>
+
+            <app-status-badge [status]="status(trainer)">
+            </app-status-badge>
+
+          </td>
+
+          <td class="text-end">
+
+            <app-action-menu [actions]="actions"
+                             (actionSelected)="onAction($event,trainer.trainerId)">
+            </app-action-menu>
+
+          </td>
+
+        </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+  <div class="card-footer bg-white d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+
+    <span class="small text-secondary">
+      Showing {{startEntry()}} to {{endEntry()}} of {{totalCount()}} entries
+    </span>
+
+    @if(totalPages()>1){
+
+    <app-pagination [currentPage]="currentPage()"
+                    [totalPages]="totalPages()"
+                    (pageChanged)="pageChanged.emit($event)">
+    </app-pagination>
+
+    }
+
+  </div>
+
+  }
+
+</div>

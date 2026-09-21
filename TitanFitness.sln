@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TitanFitness.Application", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TitanFitness.Infrastructure", "Infrastructure\TitanFitness.Infrastructure.csproj", "{24DDAA62-E1EE-4BB4-9311-66A072ADF3D8}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "TitanFitness.Frontend", "TitanFitness.Frontend\TitanFitness.Frontend.esproj", "{83AE59A0-BE75-D551-46E7-AB1C0A88F726}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,12 @@ Global
 		{24DDAA62-E1EE-4BB4-9311-66A072ADF3D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24DDAA62-E1EE-4BB4-9311-66A072ADF3D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24DDAA62-E1EE-4BB4-9311-66A072ADF3D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83AE59A0-BE75-D551-46E7-AB1C0A88F726}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83AE59A0-BE75-D551-46E7-AB1C0A88F726}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83AE59A0-BE75-D551-46E7-AB1C0A88F726}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{83AE59A0-BE75-D551-46E7-AB1C0A88F726}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83AE59A0-BE75-D551-46E7-AB1C0A88F726}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83AE59A0-BE75-D551-46E7-AB1C0A88F726}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

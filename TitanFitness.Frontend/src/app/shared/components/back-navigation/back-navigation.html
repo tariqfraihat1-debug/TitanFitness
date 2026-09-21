@@ -1,0 +1,8 @@
+<button type="button"
+        class="btn btn-link p-0 text-decoration-none d-inline-flex align-items-center gap-2"
+        (click)="clicked.emit()">
+
+  <fa-icon [icon]="icon"></fa-icon>
+
+  <span>{{label()}}</span>
+</button>

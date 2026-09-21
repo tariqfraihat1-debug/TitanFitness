@@ -1,0 +1,109 @@
+<div class="card">
+
+  @if(plans().length===0){
+
+  <div class="card-body">
+
+    <app-empty-card [icon]="emptyIcon"
+                    title="No plans found"
+                    message="No plans match the current search or filter."
+                    [showButton]="false">
+    </app-empty-card>
+
+  </div>
+
+  }@else{
+
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+
+      <thead class="table-light">
+
+        <tr>
+          <th>Plan Name</th>
+          <th>Price</th>
+          <th>Duration</th>
+          <th>Freeze Allowance</th>
+          <th>Guest Passes</th>
+          <th>Access</th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        @for(plan of plans();track plan.planId){
+
+        <tr>
+
+          <td class="fw-semibold">
+            {{plan.planName}}
+          </td>
+
+          <td>
+            {{plan.price|currency:'USD':'symbol':'1.2-2'}}
+          </td>
+
+          <td>
+            {{duration(plan.durationInMonths)}}
+          </td>
+
+          <td>
+            {{freezeAllowance(plan)}}
+          </td>
+
+          <td>
+            {{plan.guestPassQuota}}
+          </td>
+
+          <td>
+            {{plan.accessScope}}
+          </td>
+
+          <td>
+
+            <app-status-badge [status]="status(plan)">
+            </app-status-badge>
+
+          </td>
+
+          <td class="text-end">
+
+            <app-action-menu [actions]="actions"
+                             (actionSelected)="onAction($event,plan.planId)">
+            </app-action-menu>
+
+          </td>
+
+        </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+  <div class="card-footer bg-white d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+
+    <span class="small text-secondary">
+      Showing {{startEntry()}} to {{endEntry()}} of {{totalCount()}} entries
+    </span>
+
+    @if(totalPages()>1){
+
+    <app-pagination [currentPage]="currentPage()"
+                    [totalPages]="totalPages()"
+                    (pageChanged)="pageChanged.emit($event)">
+    </app-pagination>
+
+    }
+
+  </div>
+
+  }
+
+</div>

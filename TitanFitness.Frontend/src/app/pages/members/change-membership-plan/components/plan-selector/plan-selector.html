@@ -1,0 +1,24 @@
+<label class="form-label fw-semibold">
+  Select new plan
+  <span class="text-danger">*</span>
+</label>
+
+<select class="form-select"
+        [value]="selectedPlanId()??''"
+        (change)="onChange($event)">
+
+  <option value="">
+    Select a plan
+  </option>
+
+  @for(plan of plans();track plan.planId){
+  <option [value]="plan.planId">
+    {{plan.planName}} — {{plan.price|number:'1.2-2'}} / {{plan.durationInMonths}} months
+  </option>
+  }
+
+</select>
+
+<div class="form-text">
+  Only published plans available to this member are listed.
+</div>

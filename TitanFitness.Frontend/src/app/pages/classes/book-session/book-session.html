@@ -1,0 +1,100 @@
+<div class="row justify-content-center">
+
+  <div class="col-12 col-lg-9 col-xl-7">
+
+    @if(error()){
+
+    <div class="mb-3">
+
+      <app-alert-message type="error"
+                         [message]="error()">
+      </app-alert-message>
+
+    </div>
+
+    }
+
+    @if(loading()){
+
+    <app-loading message="Loading booking...">
+    </app-loading>
+
+    }@else if(session()){
+
+    <form [formGroup]="form"
+          (ngSubmit)="confirmBooking()">
+
+      <div class="card border shadow-sm">
+
+        <div class="card-body p-4">
+
+          <app-session-summary [session]="session()!">
+          </app-session-summary>
+
+          <div class="mt-3">
+
+            <app-member-search [members]="members()"
+                               [loading]="searchLoading()"
+                               [searched]="searched()"
+                               (searchChanged)="searchMembers($event)"
+                               (memberSelected)="selectMember($event)">
+            </app-member-search>
+
+          </div>
+
+          @if(selectedMember()){
+
+          <div class="mt-2">
+
+            <app-member-summary-card [name]="selectedMember()!.fullName"
+                                     [membershipNumber]="selectedMember()!.membershipNumber"
+                                     [status]="selectedMember()!.status"
+                                     [photo]="selectedMember()!.photo">
+            </app-member-summary-card>
+
+          </div>
+
+          }
+
+          <div class="mt-4">
+
+            <app-textarea-editor id="bookingNotes"
+                                 label="Special Requirements / Notes"
+                                 optionalText="Optional"
+                                 [control]="form.controls.trainerNotes"
+                                 placeholder="e.g., Recovering from mild shoulder injury"
+                                 [rows]="3"
+                                 [maxLength]="500"
+                                 errorMessage="Notes cannot exceed 500 characters.">
+            </app-textarea-editor>
+
+          </div>
+
+        </div>
+
+        <div class="card-footer bg-white d-flex justify-content-end gap-2 p-3">
+
+          <app-button variant="outline-secondary"
+                      type="button"
+                      [disabled]="saving()"
+                      (clicked)="cancel()">
+            Cancel
+          </app-button>
+
+          <app-button variant="primary"
+                      type="submit"
+                      [disabled]="!canConfirm()">
+            {{saving()?'Booking...':'Confirm Booking'}}
+          </app-button>
+
+        </div>
+
+      </div>
+
+    </form>
+
+    }
+
+  </div>
+
+</div>

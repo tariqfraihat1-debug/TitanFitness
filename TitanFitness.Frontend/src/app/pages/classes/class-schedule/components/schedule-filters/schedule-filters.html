@@ -1,0 +1,22 @@
+<div class="d-flex flex-column flex-md-row gap-2">
+
+  <div>
+    <app-branch-select [branches]="branches()"
+                       [selectedBranchId]="branchId()"
+                       (branchChanged)="branchChanged.emit($event)">
+    </app-branch-select>
+  </div>
+
+  <div>
+    <input type="date"
+           class="form-control"
+           [value]="date()"
+           (change)="onDateChange($event)">
+  </div>
+
+  <app-button variant="primary"
+              (clicked)="addClass.emit()">
+    + Add Class
+  </app-button>
+
+</div>

@@ -1,0 +1,86 @@
+<div class="card">
+  <div class="card-body p-3">
+
+    @if(variant()==='change-plan'){
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+
+      <div class="d-flex align-items-center gap-3">
+
+        <div class="member-photo-sm bg-secondary-subtle rounded-3 overflow-hidden flex-shrink-0">
+          <app-member-photo [photo]="member().photo"
+                            [alt]="member().fullName">
+          </app-member-photo>
+        </div>
+
+        <div>
+          <div class="fw-bold">
+            {{member().fullName}}
+          </div>
+
+          <div class="d-flex flex-wrap align-items-center gap-2 small text-secondary">
+            <span>
+              ID: {{member().membershipNumber}}
+            </span>
+
+            <span>•</span>
+
+            <app-status-badge [status]="membership().status">
+            </app-status-badge>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="text-md-end">
+        <div class="small text-secondary">
+          Current end date
+        </div>
+
+        <div class="fw-bold">
+          {{membership().endDate|date:'MMM d, y'}}
+        </div>
+      </div>
+
+    </div>
+
+    }@else{
+
+    <div class="d-flex align-items-center gap-3">
+
+      <div class="member-photo-sm bg-secondary-subtle rounded-3 overflow-hidden flex-shrink-0">
+        <app-member-photo [photo]="member().photo"
+                          [alt]="member().fullName">
+        </app-member-photo>
+      </div>
+
+      <div>
+        <div class="fw-bold">
+          {{member().fullName}}
+        </div>
+
+        <div class="small text-secondary">
+          ID: {{member().membershipNumber}}
+          <span class="mx-1">•</span>
+          {{membership().planName}}
+        </div>
+
+        <div class="d-flex flex-wrap align-items-center gap-3 mt-2">
+
+          <app-status-badge [status]="membership().status">
+          </app-status-badge>
+
+          <span class="small text-secondary">
+            Current End Date:
+            {{membership().endDate|date:'MMM d, y'}}
+          </span>
+
+        </div>
+      </div>
+
+    </div>
+
+    }
+
+  </div>
+</div>

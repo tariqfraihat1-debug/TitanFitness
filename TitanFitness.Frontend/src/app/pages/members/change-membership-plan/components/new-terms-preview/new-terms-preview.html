@@ -1,0 +1,54 @@
+<div class="card">
+  <div class="card-header bg-white py-3">
+    <span class="fw-semibold">
+      New Terms (snapshot)
+    </span>
+  </div>
+
+  <div class="card-body">
+
+    @if(plan()){
+    <div>
+      @for(item of details();track item.label){
+      <div class="d-flex justify-content-between gap-3 py-2 border-bottom">
+        <span class="text-secondary">
+          {{item.label}}
+        </span>
+
+        <span class="fw-semibold text-end">
+          {{item.value}}
+        </span>
+      </div>
+      }
+    </div>
+
+    <div class="mt-3">
+      <app-info-notice>
+        A new membership is created with these terms copied from the plan.
+        The current membership above is untouched.
+      </app-info-notice>
+    </div>
+    }@else{
+    <div class="text-center text-secondary py-4">
+      Select a new plan to preview its terms.
+    </div>
+    }
+
+    <div class="d-grid gap-2 mt-3">
+      <app-button class="d-grid"
+                  variant="primary"
+                  [disabled]="!plan()||saving()"
+                  (clicked)="confirm.emit()">
+        {{saving()?'Saving...':'Confirm Change'}}
+      </app-button>
+
+      <app-button class="d-grid"
+                  variant="outline-secondary"
+                  [disabled]="saving()"
+                  (clicked)="cancel.emit()">
+        Cancel
+      </app-button>
+    </div>
+
+  </div>
+</div>

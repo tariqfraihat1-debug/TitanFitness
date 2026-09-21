@@ -1,0 +1,84 @@
+<app-back-navigation label="Back to Member Profile"
+                     (clicked)="back()">
+</app-back-navigation>
+
+<div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+  <h2 class="fw-bold mb-0">
+    Change Membership Plan
+  </h2>
+
+  <app-mode-badge mode="edit"></app-mode-badge>
+</div>
+
+<p class="text-secondary mt-1 mb-4">
+  Move a member onto a different plan. New terms are copied from the plan and fixed at purchase.
+</p>
+
+@if(error()){
+<div class="mb-3">
+  <app-alert-message type="error"
+                     [message]="error()">
+  </app-alert-message>
+</div>
+}
+
+@if(loading()){
+<app-loading message="Loading membership..."></app-loading>
+}@else if(member();as currentMember){
+  @if(membership();as currentMembership){
+
+<div class="mb-3">
+  <app-member-summary-strip [member]="currentMember"
+                            [membership]="currentMembership"
+                            variant="change-plan">
+  </app-member-summary-strip>
+</div>
+
+<div class="row g-3">
+
+  <div class="col-12 col-lg-8">
+    <div class="d-grid gap-3">
+
+      <app-current-membership-summary [membership]="currentMembership">
+      </app-current-membership-summary>
+
+      <div class="card">
+        <div class="card-header bg-white py-3">
+          <span class="fw-semibold">
+            New Plan
+          </span>
+        </div>
+
+        <div class="card-body">
+          <app-plan-selector [plans]="plans()"
+                             [selectedPlanId]="selectedPlanId()"
+                             (selectedPlanIdChange)="selectPlan($event)">
+          </app-plan-selector>
+
+          <app-effective-date-selector [mode]="effectiveMode()"
+                                       [startDate]="newStartDate()"
+                                       (modeChange)="changeEffectiveMode($event)">
+          </app-effective-date-selector>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    @if(previewLoading()){
+    <app-loading message="Loading plan terms..."></app-loading>
+    }@else{
+    <app-new-terms-preview [plan]="selectedPlan()"
+                           [newEndDate]="newEndDate()"
+                           [saving]="saving()"
+                           (confirm)="confirmChange()"
+                           (cancel)="back()">
+    </app-new-terms-preview>
+    }
+  </div>
+
+</div>
+
+  }
+}

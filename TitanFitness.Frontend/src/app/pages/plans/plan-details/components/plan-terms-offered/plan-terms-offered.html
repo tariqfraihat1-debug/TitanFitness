@@ -1,0 +1,95 @@
+<div class="card">
+
+  <div class="card-header bg-white py-3">
+    <h5 class="fw-bold mb-0">
+      Terms Offered
+    </h5>
+  </div>
+
+  <div class="card-body">
+
+    <div class="row g-3">
+
+      @for(field of fields;track field.control){
+
+      <div class="col-12 col-md-6">
+
+        <app-editor [label]="field.label"
+                    type="number"
+                    [control]="control(field.control)"
+                    [placeholder]="field.placeholder"
+                    [errorMessage]="field.errorMessage"
+                    [min]="0"
+                    [step]="1">
+        </app-editor>
+
+      </div>
+
+      }
+
+      <div class="col-12 col-md-6">
+
+        <label class="form-label fw-semibold d-block">
+          Access scope
+        </label>
+
+        @if(viewMode()){
+
+        <input type="text"
+               class="form-control"
+               [value]="accessScopeLabel()"
+               disabled>
+
+        }@else{
+
+        <div class="d-flex flex-column flex-sm-row gap-2">
+
+          <div class="form-check border rounded px-3 py-2">
+
+            <input id="homeBranchOnly"
+                   type="radio"
+                   class="form-check-input ms-0 me-2"
+                   [value]="AccessScopeFilter.HomeBranchOnly"
+                   [formControl]="accessScopeControl()">
+
+            <label for="homeBranchOnly"
+                   class="form-check-label">
+              Home branch only
+            </label>
+
+          </div>
+
+          <div class="form-check border rounded px-3 py-2">
+
+            <input id="allBranches"
+                   type="radio"
+                   class="form-check-input ms-0 me-2"
+                   [value]="AccessScopeFilter.AllBranches"
+                   [formControl]="accessScopeControl()">
+
+            <label for="allBranches"
+                   class="form-check-label">
+              All branches
+            </label>
+
+          </div>
+
+        </div>
+
+        @if(accessScopeControl().touched&&accessScopeControl().invalid){
+
+        <small class="text-danger d-block mt-1">
+          Access scope is required.
+        </small>
+
+        }
+
+        }
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

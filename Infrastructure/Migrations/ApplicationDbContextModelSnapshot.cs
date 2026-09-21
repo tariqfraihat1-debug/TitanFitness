@@ -388,8 +388,7 @@ namespace TitanFitness.Infrastructure.Migrations
                         .HasColumnName("JoinedDate");
 
                     b.Property<string>("Photo")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("Photo");
 
                     b.HasKey("Id");

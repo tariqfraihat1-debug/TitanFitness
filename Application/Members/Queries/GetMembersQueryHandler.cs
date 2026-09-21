@@ -40,7 +40,7 @@ public sealed class GetMembersQueryHandler
     {
         DateOnly today = DateOnly.FromDateTime(DateTime.Now);
 
-        // Build the directory with branch, relevant membership and last visit.
+        // Build the directory with branch, relevant membership, photo and last visit.
         var query =
             from member in _memberReadRepository.GetAll()
 
@@ -72,6 +72,7 @@ public sealed class GetMembersQueryHandler
                 member.Id,
                 MembershipNumber = member.MembershipNumber.Value,
                 member.FullName,
+                member.Photo,
                 BranchName = branch.Name,
                 Membership = membership,
                 IsFrozen = membership != null &&
@@ -168,7 +169,8 @@ public sealed class GetMembersQueryHandler
                     member.FullName,
                     status,
                     member.BranchName,
-                    member.LastVisit);
+                    member.LastVisit,
+                    member.Photo);
             })
             .ToList();
 

@@ -1,0 +1,132 @@
+<div class="card">
+
+  <div class="card-header bg-white d-flex align-items-center justify-content-between py-3">
+
+    <h5 class="fw-bold mb-0">
+      Today's Sessions
+    </h5>
+
+    <span class="badge bg-secondary-subtle text-secondary">
+      {{totalCount()}} Classes
+    </span>
+
+  </div>
+
+  @if(sessions().length===0){
+
+  <app-empty-card title="No classes scheduled"
+                  message="There are no class sessions for the selected branch and date.">
+  </app-empty-card>
+
+  }@else{
+
+  <div class="list-group list-group-flush">
+
+    @for(session of sessions();track session.sessionId){
+
+    <div class="list-group-item py-3"
+         [class.list-group-item-action]="canSelect(session)"
+         [attr.role]="canSelect(session)?'button':null"
+         [attr.tabindex]="canSelect(session)?0:null"
+         (click)="selectSession(session)"
+         (keydown.enter)="selectSession(session)"
+         (keydown.space)="selectSession(session)">
+
+      <div class="row align-items-center g-3">
+
+        <div class="col-auto">
+
+          <div class="border rounded text-center px-2 py-1">
+
+            <div class="fw-bold">
+              {{session.startTime|time12Hour:'time'}}
+            </div>
+
+            <div class="small text-secondary">
+              {{session.startTime|time12Hour:'period'}}
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="col">
+
+          <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+
+            <span class="fw-bold">
+              {{session.className}}
+            </span>
+
+            @if(session.status==='In Progress'){
+
+            <app-status-badge [status]="session.status">
+            </app-status-badge>
+
+            }
+
+          </div>
+
+          <div class="d-flex flex-wrap gap-3 small text-secondary">
+
+            <span>
+
+              <fa-icon [icon]="trainerIcon"
+                       class="me-1">
+              </fa-icon>
+
+              {{session.trainerName}}
+
+            </span>
+
+            <span>
+
+              <fa-icon [icon]="studioIcon"
+                       class="me-1">
+              </fa-icon>
+
+              {{session.studioName}}
+
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="col-12 col-sm-4 col-lg-3">
+
+          <div class="text-end fw-semibold small mb-1">
+            {{session.bookedCount}} / {{session.capacityLimit}}
+          </div>
+
+          <div class="progress">
+            <div class="progress-bar"
+                 role="progressbar"
+                 [style.width.%]="progressPercent(session)"
+                 [attr.aria-valuenow]="progressPercent(session)"
+                 aria-valuemin="0"
+                 aria-valuemax="100">
+            </div>
+          </div>
+
+          @if(session.waitlistCount>0){
+
+          <div class="text-end small text-secondary mt-1">
+            Waitlist: {{session.waitlistCount}}
+          </div>
+
+          }
+
+        </div>
+
+      </div>
+
+    </div>
+
+    }
+
+  </div>
+
+  }
+
+</div>

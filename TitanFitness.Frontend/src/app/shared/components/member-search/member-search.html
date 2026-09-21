@@ -1,0 +1,58 @@
+<div>
+
+  <label for="memberSearch"
+         class="form-label fw-semibold">
+    Select Member
+  </label>
+
+  <div class="input-group">
+
+    <span class="input-group-text bg-white">
+      <fa-icon [icon]="searchIcon"></fa-icon>
+    </span>
+
+    <input id="memberSearch"
+           type="search"
+           class="form-control"
+           placeholder="Search by name or ID..."
+           [formControl]="searchControl">
+
+  </div>
+
+  @if(loading()){
+
+  <div class="small text-secondary mt-2">
+    Searching...
+  </div>
+
+  }@else if(searched()&&members().length===0){
+
+  <div class="mt-2">
+
+    <app-empty-card title="No members found"
+                    message="No members match your search.">
+    </app-empty-card>
+
+  </div>
+
+  }@else if(members().length>0){
+
+  <div class="d-grid gap-2 mt-2">
+
+    @for(member of members();track member.memberId){
+
+    <app-member-summary-card [name]="member.fullName"
+                             [membershipNumber]="member.membershipNumber"
+                             [status]="member.status"
+                             [photo]="member.photo"
+                             [selectable]="true"
+                             (selected)="memberSelected.emit(member)">
+    </app-member-summary-card>
+
+    }
+
+  </div>
+
+  }
+
+</div>

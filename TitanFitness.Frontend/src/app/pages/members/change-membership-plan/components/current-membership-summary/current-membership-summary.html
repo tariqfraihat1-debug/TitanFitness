@@ -1,0 +1,38 @@
+<div class="card">
+  <div class="card-header bg-white py-3">
+    <span class="fw-semibold">
+      Current Membership
+    </span>
+
+    <span class="text-secondary small ms-2">
+      — locked
+    </span>
+  </div>
+
+  <div class="card-body">
+    <div class="row g-3">
+
+      @for(item of details();track item.label){
+      <div class="col-12 col-sm-6">
+        <div class="small text-secondary">
+          {{item.label}}
+        </div>
+
+        <div class="fw-semibold">
+          {{item.value}}
+        </div>
+      </div>
+      }
+
+    </div>
+
+    <div class="alert alert-secondary border-0 d-flex gap-2 mt-3 mb-0 small">
+      <fa-icon [icon]="lockIcon"></fa-icon>
+
+      <span>
+        These terms were fixed at purchase and are never changed.
+        Switching plans creates a new membership rather than editing this one.
+      </span>
+    </div>
+  </div>
+</div>

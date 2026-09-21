@@ -1,0 +1,57 @@
+<div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-start gap-3 mb-4">
+
+  <app-content-header title="Trainer Directory"
+                      subtitle="Manage and view all trainers.">
+  </app-content-header>
+
+  <div class="d-flex flex-column flex-sm-row gap-2">
+
+    <app-branch-select [branches]="branches()"
+                       [selectedBranchId]="branchId()"
+                       (branchChanged)="onBranchChange($event)">
+    </app-branch-select>
+
+    <app-button variant="primary"
+                (clicked)="addTrainer()">
+
+      <fa-icon [icon]="addIcon"
+               class="me-2">
+      </fa-icon>
+
+      Add Trainer
+
+    </app-button>
+
+  </div>
+
+</div>
+
+@if(error()){
+
+<div class="mb-3">
+
+  <app-alert-message type="error"
+                     [message]="error()">
+  </app-alert-message>
+
+</div>
+
+}
+
+@if(loading()){
+
+<app-loading message="Loading trainers...">
+</app-loading>
+
+}@else{
+
+<app-trainer-table [trainers]="trainers()"
+                   [currentPage]="page()"
+                   [totalPages]="totalPages()"
+                   [totalCount]="totalCount()"
+                   [pageSize]="pageSize()"
+                   (pageChanged)="onPageChange($event)"
+                   (actionSelected)="onTrainerAction($event)">
+</app-trainer-table>
+
+}

@@ -1,0 +1,15 @@
+<div class="text-center py-5 px-3">
+  @if(icon();as emptyIcon){
+  <div class="text-secondary fs-1 mb-3">
+    <fa-icon [icon]="emptyIcon"></fa-icon>
+  </div>
+  }
+  <h5 class="fw-bold mb-2">{{title()}}</h5>
+  <p class="text-secondary mb-3">{{message()}}</p>
+  @if(showButton()){
+  <app-button variant="primary"
+              (clicked)="buttonClick.emit()">
+    {{buttonText()}}
+  </app-button>
+  }
+</div>

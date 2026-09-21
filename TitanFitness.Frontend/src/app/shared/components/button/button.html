@@ -1,0 +1,7 @@
+<button [type]="type()"
+        class="btn"
+        [class]="'btn-'+variant()"
+        [disabled]="disabled()"
+        (click)="clicked.emit()">
+  <ng-content></ng-content>
+</button>

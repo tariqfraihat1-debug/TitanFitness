@@ -1,0 +1,72 @@
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+  <div class="d-flex align-items-center gap-3">
+    <app-back-navigation label=""
+                         (clicked)="back()">
+    </app-back-navigation>
+
+    <h2 class="fw-bold mb-0">
+      Member Profile
+    </h2>
+  </div>
+
+  <app-button variant="outline-secondary"
+              (clicked)="editProfile()">
+    Edit Profile
+  </app-button>
+</div>
+
+@if(error()){
+<div class="mb-3">
+  <app-alert-message type="error"
+                     [message]="error()">
+  </app-alert-message>
+</div>
+}
+
+@if(loading()){
+<app-loading message="Loading member profile..."></app-loading>
+}@else if(member();as currentMember){
+
+<div class="row g-3">
+
+  <div class="col-12 col-lg-5 col-xl-4">
+    <div class="d-grid gap-3">
+
+      <app-member-identity [member]="currentMember"
+                           [status]="membership()?.status??'No Membership'">
+      </app-member-identity>
+
+      <app-current-plan [membership]="membership()"
+                        (changePlan)="changePlan()"
+                        (freezeMembership)="freezeMembership()"
+                        (renewMembership)="renewMembership()">
+      </app-current-plan>
+
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-7 col-xl-8">
+
+    @if(usageCards().length){
+    <div class="row g-3 mb-3">
+
+      @for(card of usageCards();track card.title){
+      <div class="col-12 col-md-6">
+        <app-usage-card [title]="card.title"
+                        [used]="card.used"
+                        [allowed]="card.allowed"
+                        [itemName]="card.itemName">
+        </app-usage-card>
+      </div>
+      }
+
+    </div>
+    }
+
+    <app-recent-activity [activities]="activities()">
+    </app-recent-activity>
+
+  </div>
+
+</div>
+}

@@ -1,0 +1,19 @@
+<div class="dropdown">
+  <button type="button"
+          class="btn btn-light"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          aria-label="Actions">
+    <fa-icon [icon]="faEllipsisVertical"></fa-icon>
+  </button>
+
+  <div class="dropdown-menu dropdown-menu-end py-2">
+    @for(item of actions();track item.value){
+    <app-button class="action-menu-item d-block"
+                variant="link"
+                (clicked)="actionSelected.emit(item.value)">
+      <span class="small">{{item.label}}</span>
+    </app-button>
+    }
+  </div>
+</div>

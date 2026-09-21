@@ -1,0 +1,58 @@
+<div class="small text-uppercase text-secondary fw-semibold mb-2">
+  Entry Check
+</div>
+
+@if(eligibility().isAdmitted){
+
+<div class="alert alert-success mb-0">
+
+  <div class="d-flex align-items-start gap-3">
+
+    <fa-icon [icon]="admittedIcon"
+             class="mt-1">
+    </fa-icon>
+
+    <div>
+
+      <div class="fw-bold mb-1">
+        Cleared for entry
+      </div>
+
+      <div>
+        Membership started, has not ended, is not frozen,
+        and its access scope reaches {{branchName()}}.
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+}@else{
+
+<div class="alert alert-danger mb-0">
+
+  <div class="d-flex align-items-start gap-3">
+
+    <fa-icon [icon]="refusedIcon"
+             class="mt-1">
+    </fa-icon>
+
+    <div>
+
+      <div class="fw-bold mb-1">
+        Entry refused
+      </div>
+
+      <div>
+        {{eligibility().refusalReason}}
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+}

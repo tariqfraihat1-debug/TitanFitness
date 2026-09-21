@@ -1,0 +1,63 @@
+@if(members().length===0){
+<app-empty-card [icon]="faUsersSlash"
+                title="No members found"
+                message="No members match the current search or filters."
+                [showButton]="false">
+</app-empty-card>
+}@else{
+<div class="table-responsive ">
+  <table class="table align-middle mb-0">
+    <thead class="table-light">
+      <tr>
+        <th>Member Name</th>
+        <th>ID</th>
+        <th>Status</th>
+        <th>Branch</th>
+        <th>Last Visit</th>
+        <th class="text-end">Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for(member of members();track member.memberId){
+      <tr>
+        <td>
+          <div class="d-flex align-items-center gap-2">
+            <div class="member-photo-sm rounded-circle bg-secondary-subtle d-flex align-items-center justify-content-center text-primary fw-semibold flex-shrink-0">
+              {{getInitials(member.fullName)}}
+            </div>
+
+            <span class="fw-semibold">
+              {{member.fullName}}
+            </span>
+          </div>
+        </td>
+
+        <td>
+          #{{member.membershipNumber}}
+        </td>
+
+        <td>
+          <app-status-badge [status]="member.status">
+          </app-status-badge>
+        </td>
+
+        <td>
+          {{member.branch}}
+        </td>
+
+        <td>
+          {{member.lastVisit | visitDate}}
+        </td>
+
+        <td class="text-end">
+          <app-action-menu [actions]="actions"
+                           (actionSelected)="onAction($event,member.memberId)">
+          </app-action-menu>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+}

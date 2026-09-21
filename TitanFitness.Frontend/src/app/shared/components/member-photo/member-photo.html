@@ -1,0 +1,9 @@
+@if(photo()){
+<img [src]="photo()!"
+     [alt]="alt()"
+     class="w-100 h-100 object-fit-cover">
+}@else{
+<div class="w-100 h-100 d-flex align-items-center justify-content-center text-secondary">
+  <fa-icon [icon]="icon"></fa-icon>
+</div>
+}

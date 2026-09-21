@@ -1,0 +1,56 @@
+<app-content-header title="Member Directory"
+                    subtitle="View and manage members across all branches.">
+</app-content-header>
+
+@if(error()){
+<div class="mb-3">
+  <app-alert-message type="error"
+                     [message]="error()">
+  </app-alert-message>
+</div>
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-end gap-2 mb-3">
+  <div class="col-12 col-md-4 col-lg-3">
+    <app-branch-select [branches]="branches()"
+                       [selectedBranchId]="branchId()"
+                       (branchChanged)="onBranchChange($event)">
+    </app-branch-select>
+  </div>
+
+  <app-button variant="primary"
+              (clicked)="addMember()">
+    + Add Member
+  </app-button>
+</div>
+
+@if(loading()){
+<app-loading message="Loading members..."></app-loading>
+}@else{
+<div class="card">
+
+  <div class="card-body p-0">
+    <app-member-table [members]="members()"
+                      (actionSelected)="onMemberAction($event)">
+    </app-member-table>
+  </div>
+
+  @if(totalCount()>0){
+  <div class="card-footer bg-white d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 py-3">
+
+    <span class="text-secondary small">
+      Showing {{startEntry()}} to {{endEntry()}} of {{totalCount()}} entries
+    </span>
+
+    @if(totalPages()>1){
+    <app-pagination [currentPage]="page()"
+                    [totalPages]="totalPages()"
+                    (pageChanged)="onPageChange($event)">
+    </app-pagination>
+    }
+
+  </div>
+  }
+
+</div>
+}

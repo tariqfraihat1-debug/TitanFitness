@@ -1,0 +1,213 @@
+<form [formGroup]="form"
+      (ngSubmit)="save()">
+
+  <app-modal title="Add New Class"
+             [closeDisabled]="saving()"
+             (closed)="closed.emit()">
+
+    @if(error()){
+    <div class="mb-3">
+
+      <app-alert-message type="error"
+                         [message]="error()">
+      </app-alert-message>
+
+    </div>
+    }
+
+    <div class="row g-3">
+
+      <div class="col-12 col-md-6">
+
+        <app-editor label="Class Name"
+                    [control]="form.controls.className"
+                    placeholder="e.g., High-Intensity Interval Training"
+                    [requiredMark]="true"
+                    errorMessage="Class name is required.">
+        </app-editor>
+
+      </div>
+
+      @for(field of selectFields();track field.label){
+
+      <div class="col-12 col-md-6">
+
+        <app-select-editor [label]="field.label"
+                           [control]="field.control"
+                           [options]="field.options"
+                           [placeholder]="field.placeholder"
+                           [requiredMark]="field.requiredMark"
+                           [errorMessage]="field.errorMessage">
+        </app-select-editor>
+
+      </div>
+
+      }
+
+    </div>
+
+    <div class="border-top mt-4 pt-4">
+
+      <div class="row g-3">
+
+        <div class="col-12 col-md-4">
+
+          <app-editor label="Date"
+                      [control]="form.controls.sessionDate"
+                      type="date"
+                      [requiredMark]="true"
+                      errorMessage="Date is required.">
+          </app-editor>
+
+        </div>
+
+        <div class="col-12 col-md-4">
+
+          <label for="classStartTime"
+                 class="form-label fw-semibold">
+            Start Time
+            <span class="text-danger">*</span>
+          </label>
+
+          <input id="classStartTime"
+                 type="time"
+                 class="form-control"
+                 [formControl]="form.controls.startTime">
+
+          @if(form.controls.startTime.touched&&form.controls.startTime.invalid){
+          <small class="text-danger">
+            Start time is required.
+          </small>
+          }
+
+        </div>
+
+        <div class="col-12 col-md-4">
+
+          <label class="form-label fw-semibold">
+            Capacity Limit
+            <span class="text-danger">*</span>
+          </label>
+
+          <div class="input-group">
+
+            <input id="capacityLimit"
+                   type="number"
+                   class="form-control"
+                   min="1"
+                   [max]="selectedStudio()?.capacity??null"
+                   placeholder="20"
+                   [formControl]="form.controls.capacityLimit">
+
+            <span class="input-group-text">
+              spots
+            </span>
+
+          </div>
+
+          @if(form.controls.capacityLimit.touched&&form.controls.capacityLimit.hasError('required')){
+          <small class="text-danger d-block">
+            Capacity limit is required.
+          </small>
+          }
+
+          @if(form.controls.capacityLimit.touched&&form.controls.capacityLimit.hasError('min')){
+          <small class="text-danger d-block">
+            Capacity must be greater than 0.
+          </small>
+          }
+
+          @if(form.controls.capacityLimit.touched&&form.controls.capacityLimit.hasError('max')){
+          <small class="text-danger d-block">
+            Capacity cannot exceed {{selectedStudio()?.capacity}} spots.
+          </small>
+          }
+
+        </div>
+
+      </div>
+
+      <div class="row g-3 mt-1">
+
+        <div class="col-12 col-md-6">
+
+          <label class="form-label fw-semibold">
+            Duration
+          </label>
+
+          <div class="d-flex gap-2">
+
+            @for(duration of durations;track duration.value){
+
+            <button type="button"
+                    class="btn border flex-fill"
+                    [class.border-primary]="form.controls.durationMinutes.value===duration.value"
+                    [class.text-primary]="form.controls.durationMinutes.value===duration.value"
+                    [class.fw-semibold]="form.controls.durationMinutes.value===duration.value"
+                    (click)="selectDuration(duration.value)">
+              {{duration.label}}
+            </button>
+
+            }
+
+          </div>
+
+        </div>
+
+        <div class="col-12 col-md-6">
+
+          <label class="form-label fw-semibold d-block">
+            Status
+          </label>
+
+          <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+            ● Active (Booking Open)
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="border-top mt-4 pt-4">
+
+      <app-textarea-editor id="classDescription"
+                           label="Description"
+                           optionalText="Optional"
+                           [control]="form.controls.description"
+                           placeholder="Add details about the class focus, required equipment, or intensity level..."
+                           [rows]="3"
+                           [maxLength]="500"
+                           errorMessage="Description cannot exceed 500 characters.">
+      </app-textarea-editor>
+
+    </div>
+
+    <div modal-footer
+         class="d-flex gap-2">
+
+      <app-button variant="outline-secondary"
+                  type="button"
+                  [disabled]="saving()"
+                  (clicked)="closed.emit()">
+        Cancel
+      </app-button>
+
+      <app-button variant="primary"
+                  type="submit"
+                  [disabled]="saving()||loadingOptions()">
+
+        <fa-icon [icon]="scheduleIcon"
+                 class="me-2">
+        </fa-icon>
+
+        {{saving()?'Scheduling...':'Schedule Class'}}
+
+      </app-button>
+
+    </div>
+
+  </app-modal>
+
+</form>

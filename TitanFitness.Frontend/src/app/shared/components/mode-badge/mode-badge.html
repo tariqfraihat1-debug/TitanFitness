@@ -1,0 +1,10 @@
+<span class="badge rounded-pill fw-semibold px-2 py-1"
+      [class.bg-primary-subtle]="mode()==='add'||mode()==='edit'"
+      [class.text-primary]="mode()==='add'||mode()==='edit'"
+      [class.bg-secondary-subtle]="mode()==='view'"
+      [class.text-secondary]="mode()==='view'">
+
+  <span class="me-1">•</span>
+
+  {{mode()==='add'?'Add mode':mode()==='edit'?'Edit mode':'View mode'}}
+</span>
